@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: newsite-estate-portal
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        value: super-secret-estate-key-2026

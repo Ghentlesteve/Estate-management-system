@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white rounded-lg shadow p-6 mb-6">
+    <div class="flex justify-between items-start">
+        <div>
+            <h2 class="text-2xl font-bold">{{ resident.first_name }} {{ resident.last_name }}</h2>
+            <p class="text-gray-600">House: {{ resident.house_number }}</p>
+            <p class="text-gray-600">Email: {{ resident.email }}</p>
+            <p class="text-gray-600">Phone: {{ resident.phone }}</p>
+            <p class="text-gray-600">Occupants: {{ resident.occupant_count }} | Vehicles: {{ resident.vehicle_count }}
+            </p>
+            <p class="text-sm text-gray-500">Member since: {{ resident.created_at.strftime('%d %b, %Y') }}</p>
+        </div>
+        <div>
+            <span
+                class="px-3 py-1 rounded-full text-sm {% if resident.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                {{ 'Active' if resident.is_active else 'Inactive' }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="font-bold text-lg mb-4">Payment History</h3>
+        <div class="space-y-3">
+            {% for payment in payments[:10] %}
+            <div class="flex justify-between items-center border-b pb-2">
+                <div>
+                    <p class="font-medium">
+                        {% if payment.category %}
+                        {{ payment.category.name }}
+                        {% else %}
+                        Estate Dues
+                        {% endif %}
+                    </p>
+                    <p class="text-sm text-gray-500">{{ payment.payment_date.strftime('%d %b, %Y') }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-green-600">₦{{ "%.2f"|format(payment.amount) }}</p>
+                    <p class="text-xs text-gray-500">{{ payment.status }}</p>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No payment records</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="font-bold text-lg mb-4">Complaint History</h3>
+        <div class="space-y-3">
+            {% for complaint in complaints[:10] %}
+            <div class="border-b pb-2">
+                <div class="flex justify-between">
+                    <p class="font-medium">{{ complaint.subject }}</p>
+                    <span class="px-2 py-1 text-xs rounded-full 
+                        {% if complaint.status == 'pending' %}bg-yellow-100 text-yellow-800
+                        {% elif complaint.status == 'resolved' %}bg-green-100 text-green-800
+                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        {{ complaint.status }}
+                    </span>
+                </div>
+                <p class="text-sm text-gray-500">{{ complaint.created_at.strftime('%d %b, %Y') }}</p>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No complaints</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="mt-6">
+    <a href="{{ url_for('residents') }}" class="text-blue-600 hover:underline">
+        <i class="fas fa-arrow-left"></i> Back to Residents
+    </a>
+</div>
+{% endblock %}

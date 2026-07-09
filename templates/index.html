@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-600">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Total Registered</p>
+                <p class="text-2xl font-bold">{{ total_residents }}</p>
+            </div>
+            <i class="fas fa-users text-3xl text-blue-600"></i>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-600">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Active Residents</p>
+                <p class="text-2xl font-bold">{{ active_residents }}</p>
+            </div>
+            <i class="fas fa-user-check text-3xl text-green-600"></i>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-gray-400">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Moved Out</p>
+                <p class="text-2xl font-bold">{{ inactive_residents }}</p>
+            </div>
+            <i class="fas fa-user-slash text-3xl text-gray-400"></i>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-600">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Pending Complaints</p>
+                <p class="text-2xl font-bold">{{ pending_complaints }}</p>
+            </div>
+            <i class="fas fa-exclamation-triangle text-3xl text-yellow-600"></i>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="font-bold text-lg mb-4 flex items-center">
+            <i class="fas fa-money-bill-wave text-green-600 mr-2"></i> Recent Payments
+        </h3>
+        <div class="space-y-3">
+            {% for payment in recent_payments %}
+            <div class="flex justify-between items-center border-b pb-2">
+                <div>
+                    <p class="font-medium">₦{{ "%.2f"|format(payment.amount) }}</p>
+                    <p class="text-sm text-gray-500">{{ payment.resident.first_name }} {{ payment.resident.last_name }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-medium">
+                        {% if payment.dues_category %}
+                        {{ payment.dues_category.name }}
+                        {% elif payment.category_relationship %}
+                        {{ payment.category_relationship.name }}
+                        {% else %}
+                        Estate Dues
+                        {% endif %}
+                    </p>
+                    <p class="text-xs text-gray-500">{{ payment.created_at.strftime('%d %b, %Y') }}</p>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No recent payments</p>
+            {% endfor %} </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="font-bold text-lg mb-4 flex items-center">
+            <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i> Recent Complaints
+        </h3>
+        <div class="space-y-3">
+            {% for complaint in recent_complaints %}
+            <div class="flex justify-between items-center border-b pb-2">
+                <div>
+                    <p class="font-medium">{{ complaint.subject }}</p>
+                    <p class="text-sm text-gray-500">{{ complaint.resident.first_name }} {{ complaint.resident.last_name }}</p>
+                </div>
+                <span class="px-2 py-1 text-xs rounded-full 
+                    {% if complaint.status == 'pending' %}bg-yellow-100 text-yellow-800
+                    {% elif complaint.status == 'in_progress' %}bg-blue-100 text-blue-800
+                    {% elif complaint.status == 'resolved' %}bg-green-100 text-green-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ complaint.status }}
+                </span>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No recent complaints</p>
+            {% endfor %} </div>
+    </div>
+</div>
+
+{% endblock %} ```
